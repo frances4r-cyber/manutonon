@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiche Manutenzioni</title>
+    <link rel="icon" href="data:,">
+    <script type="module" src="statmandb.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .navigation {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .navigation button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .navigation button:hover {
+            background-color: #0056b3;
+        }
+        .statistics {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .stat {
+            margin-bottom: 20px;
+        }
+        .stat h2 {
+            color: #555;
+            font-size: 18px; /* Riduce la dimensione del carattere dei titoli */
+        }
+        .stat table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .stat th, .stat td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .stat th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Statistiche Manutenzioni</h1>
+    <div class="navigation">
+        <button onclick="exportToCSV()">Esporta CSV</button>
+        <button onclick="window.location.href='index.html'">Torna a INSERIMENTO</button>
+        <button onclick="window.location.href='getdb.html'">Vai a INDICE MANUTENZIONI</button>
+    </div>
+    <div class="statistics">
+        <div class="stat">
+            <h2>Numero totale di manutenzioni</h2>
+            <table>
+                <tr>
+                    <td id="totalManutenzioni">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di manutenzioni pendenti</h2>
+            <table>
+                <tr>
+                    <td id="openManutenzioni">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di manutenzioni chiuse</h2>
+            <table>
+                <tr>
+                    <td id="closedManutenzioni">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di manutenzioni per tipo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Quantità</th>
+                        <th>Percentuale</th>
+                    </tr>
+                </thead>
+                <tbody id="typeManutenzioni">
+                </tbody>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di manutenzioni per settore</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Settore</th>
+                        <th>Quantità</th>
+                        <th>Percentuale</th>
+                    </tr>
+                </thead>
+                <tbody id="sectorManutenzioni">
+                </tbody>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di manutenzioni per impianto</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Impianto</th>
+                        <th>Quantità</th>
+                        <th>Percentuale</th>
+                    </tr>
+                </thead>
+                <tbody id="plantManutenzioni">
+                </tbody>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Tempo medio di chiusura delle richieste (MANUT / UTEC)</h2>
+            <table>
+                <tr>
+                    <td id="averageClosureTime">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di richieste create per mese</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mese</th>
+                        <th>Quantità</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsPerMonth">
+                </tbody>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Numero di richieste chiuse per mese</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mese</th>
+                        <th>Quantità</th>
+                    </tr>
+                </thead>
+                <tbody id="closedRequestsPerMonth">
+                </tbody>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Media del numero di richieste create al mese</h2>
+            <table>
+                <tr>
+                    <td id="averageRequestsPerMonth">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="stat">
+            <h2>Media del numero di richieste chiuse al mese</h2>
+            <table>
+                <tr>
+                    <td id="averageClosedRequestsPerMonth">Caricamento...</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

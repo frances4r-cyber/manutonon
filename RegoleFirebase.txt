@@ -1,0 +1,9 @@
+{
+  "rules": {
+    ".read": "true",  // Consenti lettura a tutti
+    ".write": "true",  // Consenti scrittura a tutti
+    "ricambi": {
+      ".indexOn": ["codInt", "codFor"]
+    }
+  }
+}

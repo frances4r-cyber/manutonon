@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>INDICE MANUTENZIONI</title>
+    <link rel="icon" href="data:,">
+    <script type="module" src="getdb.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #555;
+        }
+        .mod-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .mod-button:hover {
+            background-color: #0056b3;
+        }
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .navigation button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+        .filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .filter-container input,
+        .filter-container select,
+        .filter-container button {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .export-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>INDICE MANUTENZIONI</h1>
+    <div class="navigation">
+        <button onclick="window.location.href='index.html'">INSERIMENTO MANUTENZIONI</button>
+        <button onclick="window.location.href='magdb.html'">MAGAZZINO RICAMBI</button>
+    </div>
+    <div class="filter-container">
+        <input type="text" id="searchInput" placeholder="Cerca...">
+        <select id="filterStato">
+            <option value="">Tutti gli stati</option>
+            <option value="Aperta">Aperta</option>
+            <option value="Chiusa">Chiusa</option>
+        </select>
+        <select id="filterAssegnazione">
+            <option value="">Tutte le assegnazioni</option>
+            <option value="UTEC">UTEC</option>
+            <option value="MANUT">MANUT</option>
+        </select>
+        <button onclick="window.filterTable()">Filtra</button>
+        <button onclick="window.clearFilters()">Pulisci</button>
+        <button id="exportButton" style="display:none;" onclick="window.exportToXLSX()">Esporta in XLSX</button>
+    </div>
+    <table id="manutenzioniTable">
+        <thead>
+            <tr>
+                <th>Numero Progressivo</th>
+                <th>Descrizione</th>
+                <th>Tipo</th>
+                <th>Settore</th>
+                <th>Impianto</th>
+                <th>Particolare</th>
+                <th>Data Inserimento</th>
+                <th>Assegnazione</th>
+                <th>Reperibilità</th>
+                <th>Stato</th>
+                <th>Chiusura</th>
+                <th>Modifica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- I dati verranno aggiunti qui da getdb.js -->
+        </tbody>
+    </table>
+</body>
+</html>

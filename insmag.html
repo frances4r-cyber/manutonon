@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inserimento Ricambi</title>
+    <link rel="icon" href="data:,">
+    <script type="module" src="insmag_script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .navigation button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Inserimento Ricambi</h1>
+    <div class="navigation">
+        <button onclick="window.location.href='index.html'">Torna a Attività di Manutenzione</button>
+        <button onclick="window.location.href='magdb.html'">Vai a MAGAZZINO RICAMBI</button>
+    </div>
+    <form id="ricambiForm">
+        <label for="codInt">COD. INT.:</label>
+        <input type="text" id="codInt" required>
+        <label for="codFor">COD. FOR.:</label>
+        <input type="text" id="codFor" required>
+        <label for="descrizione">Descrizione:</label>
+        <input type="text" id="descrizione" required>
+        <label for="destinazione">Destinazione:</label>
+        <input type="text" id="destinazione" required>
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" required>
+            <option value="CONS">CONS</option>
+            <option value="RIC">RIC</option>
+            <option value="GARANZIA">GARANZIA</option>
+        </select>
+        <label for="fornitore">Fornitore:</label>
+        <input type="text" id="fornitore" required>
+        <label for="qta">Q.tà:</label>
+        <input type="number" step="0.01" id="qta" required>
+        <label for="costo">Costo:</label>
+        <input type="number" step="0.01" id="costo" required>
+        <button type="submit">Inserisci</button>
+    </form>
+</body>
+</html>

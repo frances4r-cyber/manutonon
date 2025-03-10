@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Inserimento Manutenzione</title>
+    <link rel="icon" href="data:,">
+    <script type="module" src="script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"] {
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .navigation button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .navigation button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function navigateToMagazzino() {
+            window.location.href = 'magdb.html';
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Inserimento Manutenzione</h1>
+    <div class="navigation">
+        <button onclick="window.location.href='getdb.html'">INDICE MANUTENZIONI</button>
+        <button onclick="navigateToMagazzino()">Magazzino</button>
+    </div>
+    <form id="manutenzioneForm">
+        <label for="numeroProgressivo">Numero Progressivo:</label>
+        <input type="number" id="numeroProgressivo" required>
+        <label for="descrizione">Descrizione:</label>
+        <input type="text" id="descrizione" required>
+        <label for="tipo">Tipo:</label>
+        <select id="tipo" required>
+            <option value="All.04 Richiesta di Manutenzione">All.04 Richiesta di Manutenzione</option>
+            <option value="All.03 Manutenzione Straordinaria">All.03 Manutenzione Straordinaria</option>
+        </select>
+        <label for="settore">Settore:</label>
+        <select id="settore" required>
+            <option value="Confezionamento">Confezionamento</option>
+            <option value="Produzione">Produzione</option>
+            <option value="Imballaggio">Imballaggio</option>
+            <option value="Magazzino">Magazzino</option>
+            <option value="Depuratore">Depuratore</option>
+            <option value="Carico Scarico">Carico Scarico</option>
+            <option value="Ricevimento latte">Ricevimento latte</option>
+            <option value="Centrale termica">Centrale termica</option>
+            <option value="Azoti">Azoti</option>
+            <option value="Cabine BT">Cabine BT</option>
+            <option value="Acqua gelida">Acqua gelida</option>
+            <option value="Celle frigorifere">Celle frigorifere</option>
+            <option value="Serbatoi">Serbatoi</option>
+            <option value="Generale">Generale</option>
+            <option value="Distribuzione idrica">Distribuzione idrica</option>
+            <option value="Aria compressa">Aria compressa</option>
+            <option value="Acidi">Acidi</option>
+            <option value="IT">IT</option>
+            <option value="Laboratori">Laboratori</option>
+            <option value="Mezzi">Mezzi</option>
+        </select>
+        <label for="impianto">Impianto:</label>
+        <select id="impianto" required>
+            <option value="Abbattitore azoto">Abbattitore azoto</option>
+            <option value="Acqua calda">Acqua calda</option>
+            <option value="Acqua fredda">Acqua fredda</option>
+            <option value="Acqua in pressione">Acqua in pressione</option>
+            <option value="Additivazione">Additivazione</option>
+            <option value="Affumicatoio">Affumicatoio</option>
+            <option value="Aria compressa">Aria compressa</option>
+            <option value="Attrezzatura">Attrezzatura</option>
+            <option value="Autoclave">Autoclave</option>
+            <option value="Bollitore 70">Bollitore 70</option>
+            <option value="Bollitore 90">Bollitore 90</option>
+            <option value="Borin">Borin</option>
+            <option value="Buca di scarico">Buca di scarico</option>
+            <option value="Cella 1">Cella 1</option>
+            <option value="Cella 2">Cella 2</option>
+            <option value="Cella 3">Cella 3</option>
+            <option value="Centris400">Centris400</option>
+            <option value="Cloro">Cloro</option>
+            <option value="Cryoroll">Cryoroll</option>
+            <option value="Filatrice bocconcini">Filatrice bocconcini</option>
+            <option value="Filatrice filoni">Filatrice filoni</option>
+            <option value="FlexiFAM">FlexiFAM</option>
+            <option value="FlexiFAM vecchia">FlexiFAM vecchia</option>
+            <option value="Flottatore">Flottatore</option>
+            <option value="Formatrice giostra">Formatrice giostra</option>
+            <option value="Formatrice rullo">Formatrice rullo</option>
+            <option value="Fotovoltaico">Fotovoltaico</option>
+            <option value="Generale">Generale</option>
+            <option value="Illuminazione">Illuminazione</option>
+            <option value="Infrastruttura">Infrastruttura</option>
+            <option value="IT">IT</option>
+            <option value="Kaeser">Kaeser</option>
+            <option value="Karcher">Karcher</option>
+            <option value="Lavapezzi">Lavapezzi</option>
+            <option value="Linea 1">Linea 1</option>
+            <option value="Linea 2">Linea 2</option>
+            <option value="Linea 3">Linea 3</option>
+            <option value="Linea 4">Linea 4</option>
+            <option value="Linea 5">Linea 5</option>
+            <option value="Linea 6">Linea 6</option>
+            <option value="Linea 7">Linea 7</option>
+            <option value="Linea 8">Linea 8</option>
+            <option value="Linea detersivi">Linea detersivi</option>
+            <option value="Locale soppalco">Locale soppalco</option>
+            <option value="Mezzi">Mezzi</option>
+            <option value="Muletto">Muletto</option>
+            <option value="Pastorizzatore">Pastorizzatore</option>
+            <option value="PLC">PLC</option>
+            <option value="Polivalente">Polivalente</option>
+            <option value="Pozzo">Pozzo</option>
+            <option value="Sanitario">Sanitario</option>
+            <option value="Schiumogeno">Schiumogeno</option>
+            <option value="Sensore ossigeno">Sensore ossigeno</option>
+            <option value="SPX30">SPX30</option>
+            <option value="SPX40">SPX40</option>
+            <option value="Strumenti di lab">Strumenti di lab</option>
+            <option value="T11">T11</option>
+            <option value="T12">T12</option>
+            <option value="T142">T142</option>
+            <option value="T143">T143</option>
+            <option value="T144">T144</option>
+            <option value="T15">T15</option>
+            <option value="Tavolo">Tavolo</option>
+            <option value="Telefonia">Telefonia</option>
+            <option value="Transpallet">Transpallet</option>
+            <option value="Trasporto">Trasporto</option>
+            <option value="Trattamento acqua">Trattamento acqua</option>
+            <option value="Unità refrigerante">Unità refrigerante</option>
+            <option value="Vapore">Vapore</option>
+            <option value="Vasca 1">Vasca 1</option>
+            <option value="Vasca 2">Vasca 2</option>
+            <option value="Vasca 3">Vasca 3</option>
+            <option value="Vasca 4">Vasca 4</option>
+            <option value="CIP">CIP</option>
+            <option value="Vasche OX">Vasche OX</option>
+            <option value="Zudek">Zudek</option>
+        </select>
+        <label for="particolare">Particolare:</label>
+        <input type="text" id="particolare">
+        <label for="dataInserimento">Data Inserimento:</label>
+        <input type="date" id="dataInserimento" required>
+        <label for="assegnazione">Assegnazione:</label>
+        <select id="assegnazione" required>
+            <option value="UTEC">UTEC</option>
+            <option value="MANUT" selected>MANUT</option>
+        </select>
+        <label for="reperibilita">Reperibilità:</label>
+        <select id="reperibilita" required>
+            <option value="SI">SI</option>
+            <option value="NO" selected>NO</option>
+        </select>
+        <label for="stato">Stato:</label>
+        <input type="text" id="stato" value="Aperta" readonly>
+        <button type="submit">Inserisci</button>
+    </form>
+</body>
+
+</html>
