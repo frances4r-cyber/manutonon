@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Inserimento Ore Manutentori</title>
+  <link rel="icon" href="data:,">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <!-- Datepicker -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.it.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .summary {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .summary h3 {
+      color: #333;
+    }
+    .summary p {
+      font-size: 18px;
+      margin: 5px 0;
+    }
+    .form-container, .list-container {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .form-group label {
+      flex: 1;
+      margin-bottom: 5px;
+      font-weight: bold;
+      text-align: right;
+      margin-right: 20px;
+    }
+    .form-group .datepicker-inline {
+      flex: 2;
+      margin-left: 20px;
+    }
+    .form-group input, .form-group select {
+      flex: 2;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .form-group input[type="checkbox"] {
+      width: auto;
+      margin: 0 10px 0 0;
+    }
+    .form-group .numeric-input {
+      width: calc(100% - 16px);
+    }
+    .form-group .checkbox-label {
+      margin-right: 10px;
+      margin-bottom: 0;
+    }
+    .form-group .alert {
+      color: red;
+      font-weight: bold;
+    }
+    .form-actions {
+      text-align: center;
+    }
+    .form-actions button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-actions button:hover {
+      background-color: #0056b3;
+    }
+    .listbox {
+      width: 100%;
+      height: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow-y: auto;
+    }
+    .listbox-item {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #ccc;
+    }
+    .listbox-item:hover {
+      background-color: #f0f0f0;
+    }
+    .listbox-item.active {
+      background-color: #d0eaff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inserimento Ore Manutentori</h1>
+  <div class="summary">
+    <h3>Riassunto</h3>
+    <p>ORE LAVORATE: <span id="oreLavorate">0</span></p>
+    <p>ORE STRAORDINARIE: <span id="oreStraordinarie">0</span></p>
+  </div>
+  <div class="list-container">
+    <h2>Manutentori</h2>
+    <div id="manutentoriList" class="listbox"></div>
+  </div>
+  <div class="form-container" id="oreForm" style="display: none;">
+    <h2>Inserisci Ore</h2>
+    <div class="form-group">
+      <label for="datepicker">Data</label>
+      <div id="datepicker" class="datepicker-inline"></div>
+    </div>
+    <input type="hidden" id="data">
+    <div class="form-group">
+      <label for="giornoFestivo" class="checkbox-label">Giorno festivo</label>
+      <input type="checkbox" id="giornoFestivo">
+    </div>
+    <div class="form-group">
+      <label for="ord">ORD</label>
+      <input type="number" id="ord" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="emgRicev">EMG-RICEV</label>
+      <input type="number" id="emgRicev" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="emgProd">EMG-PROD</label>
+      <input type="number" id="emgProd" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="emgConf">EMG-CONF</label>
+      <input type="number" id="emgConf" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="emgImbMag">EMG-IMB/MAG</label>
+      <input type="number" id="emgImbMag" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="emgDepur">EMG-DEPUR</label>
+      <input type="number" id="emgDepur" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="danni">DANNI</label>
+      <input type="number" id="danni" class="numeric-input">
+    </div>
+    <div class="form-group">
+      <label for="install">INSTALL</label>
+      <input type="number" id="install" class="numeric-input">
+    </div>
+    <div class="form-group">
+     

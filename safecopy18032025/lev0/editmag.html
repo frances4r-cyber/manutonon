@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Modifica Ricambio</title>
+  <link rel="icon" href="data:,">
+  <script type="module" src="editmag.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .delete-button {
+      background-color: #dc3545;
+      margin-top: 10px;
+    }
+    .delete-button:hover {
+      background-color: #c82333;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation button {
+      width: auto;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+    #loading {
+      text-align: center;
+      margin: 20px;
+    }
+    #logoutButton {
+      background-color: #dc3545;
+    }
+    #logoutButton:hover {
+      background-color: #c82333;
+    }
+    #homeButton {
+      background-color: #007bff;
+    }
+    #homeButton:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Modifica Ricambio</h1>
+  <div class="navigation">
+    <button onclick="window.location.href='welcome.html'" id="homeButton">Home</button>
+    <button onclick="window.location.href='magdb.html'">Torna al Magazzino Ricambi</button>
+    <button id="logoutButton">Logout</button>
+  </div>
+  <div id="loading">Caricamento...</div>
+  <form id="updateForm" style="display:none;">
+    <label for="codInt">COD. INT.:</label>
+    <input type="text" id="codInt" readonly>
+    <label for="codFor">COD. FOR.:</label>
+    <input type="text" id="codFor" required>
+    <label for="descrizione">Descrizione:</label>
+    <input type="text" id="descrizione" required>
+    <label for="destinazione">Destinazione:</label>
+    <input type="text" id="destinazione" required>
+    <label for="tipo">Tipo:</label>
+    <select id="tipo" required>
+      <option value="CONS">CONS</option>
+      <option value="RIC">RIC</option>
+      <option value="GARANZIA">GARANZIA</option>
+      <option value="TERZI">TERZI</option>
+    </select>
+    <label for="fornitore">Fornitore:</label>
+    <input type="text" id="fornitore" required>
+    <label for="qta">Q.tà residua:</label>
+    <input type="number" step="0.01" id="qta" required>
+    <label for="costo">Costo:</label>
+    <input type="number" step="0.01" id="costo" required>
+    <button type="submit">Aggiorna</button>
+    <button type="button" id="deleteButton" class="delete-button">Elimina Ricambio</button>
+  </form>
+  <script>
+    // Funzione di logout
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        // Logout riuscito, reindirizza a index.html
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error('Errore durante il logout:', error);
+      });
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', logout);
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script>
+    // Configurazione Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7I7_NxFM-bRi4WExcOW6vJpCUPandIdM",
+      authDomain: "manutenzionetonon-24c9d.firebaseapp.com",
+      databaseURL: "https://manutenzionetonon-24c9d-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "manutenzionetonon-24c9d",
+      storageBucket: "manutenzionetonon-24c9d.appspot.com",
+      messagingSenderId: "278752294846",
+      appId: "1:278752294846:web:49cdc7ab4f5a37f7aeebef",
+      measurementId: "G-VJWMFSWH8L"
+    };
+
+    // Inizializza Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</body>
+</html>

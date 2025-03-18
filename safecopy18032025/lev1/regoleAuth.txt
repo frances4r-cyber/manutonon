@@ -1,0 +1,40 @@
+Criteri da rispettare:
+f.mussi@caseificiotonon.it = read/write ovunque.
+
+manutenzione@caseificiotonon.it = read/write cartella lev0
+
+Tutti gli altri account autenticati = read lev0
+
+Struttura del sito e delle cartelle:
+
+├───lev0
+│       auth.js
+│       calendar_manut.html
+│       editdb.html
+│       editdb.js
+│       editmag.html
+│       editmag.js
+│       getdb.html
+│       getdb.js
+│       index.html
+│       insmag.html
+│       insmag_script.js
+│       ins_ore.html
+│       login.js
+│       magdb.html
+│       magdb.js
+│       modifica_ore.html
+│       script.html
+│       script.js
+│       welcome.html
+│
+└───lev1
+        add_manutentori.html
+        add_manutentori.js
+        edit_manutentore.html
+        edit_manutentore.js
+        manustat.html
+        manustat.js
+        manu_config.html
+        manu_config.js
+        regoleAuth.txt

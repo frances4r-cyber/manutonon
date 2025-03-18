@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PREVISIONI MANUTENZIONI</title>
+  <link rel="icon" href="data:,">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    #calendar {
+      max-width: 100%;
+      margin: 40px auto;
+      padding: 0 10px;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation button {
+      width: auto;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+    #logoutButton {
+      background-color: #dc3545;
+    }
+    #logoutButton:hover {
+      background-color: #c82333;
+    }
+    #homeButton {
+      background-color: #007bff;
+    }
+    #homeButton:hover {
+      background-color: #0056b3;
+    }
+    .fc-event {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>PREVISIONI MANUTENZIONI</h1>
+  <div class="navigation">
+    <button onclick="window.location.href='welcome.html'" id="homeButton">Home</button>
+    <button onclick="window.location.href='getdb.html'">ELENCO MANUTENZIONI</button>
+    <button onclick="window.location.href='magdb.html'">MAGAZZINO RICAMBI</button>
+    <button id="logoutButton">Logout</button>
+  </div>
+  <div id="calendar"></div>
+  <script>
+    // Configurazione Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7I7_NxFM-bRi4WExcOW6vJpCUPandIdM",
+      authDomain: "manutenzionetonon-24c9d.firebaseapp.com",
+      databaseURL: "https://manutenzionetonon-24c9d-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "manutenzionetonon-24c9d",
+      storageBucket: "manutenzionetonon-24c9d.appspot.com",
+      messagingSenderId: "278752294846",
+      appId: "1:278752294846:web:49cdc7ab4f5a37f7aeebef",
+      measurementId: "G-VJWMFSWH8L"
+    };
+
+    // Inizializza Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    // Funzione di logout
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error('Errore durante il logout:', error);
+      });
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', logout);
+
+    // Funzione per ottenere il colore in base all'assegnazione
+    function getColorByAssegnazione(assegnazione) {
+      switch (assegnazione) {
+        case 'UTEC':
+          return '#ff5733'; // Rosso
+        case 'MANUT':
+          return '#33c1ff'; // Blu
+        default:
+          return '#33ff57'; // Verde
+      }
+    }
+
+    // Funzione per caricare le manutenzioni e visualizzarle nel calendario
+    function loadManutenzioni() {
+      const manutenzioniRef = database.ref('manutenzioni');
+      manutenzioniRef.once('value', (snapshot) => {
+        const events = [];
+        snapshot.forEach((childSnapshot) => {
+          const manutenzione = childSnapshot.val();
+          if (manutenzione.stato === 'Chiusa' && manutenzione.timestamp) {
+            events.push({
+              title: `#${manutenzione.numeroProgressivo} - ${manutenzione.descrizione}`,
+              start: new Date(manutenzione.timestamp),
+              allDay: true,
+              color: getColorByAssegnazione(manutenzione.assegnazione),
+              description: manutenzione.descrizione
+            });
+          }
+        });
+        $('#calendar').fullCalendar({
+          locale: 'it',
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+          },
+          buttonText: {
+            today:    'oggi',
+            month:    'mese',
+            week:     'settimana',
+            day:      'giorno'
+          },
+          monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+          monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'],
+          dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
+          dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+          firstDay: 1,
+          events: events,
+          aspectRatio: 2, // Aspect ratio to make the calendar fit the page better
+          eventRender: function(event, element) {
+            element.attr('title', event.title); // Tooltip text
+            element.tooltip();
+          },
+          eventClick: function(event) {
+            alert(event.title + "\nDescrizione: " + event.description);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Verifica l'autenticazione dell'utente
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // Utente autenticato, carica le manutenzioni
+          loadManutenzioni();
+        } else {
+          // Utente non autenticato, reindirizza alla pagina di login
+          window.location.href = 'index.html';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

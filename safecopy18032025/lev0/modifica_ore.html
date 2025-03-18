@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MODIFICA ORE MENSILI</title>
+  <link rel="icon" href="data:,">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/datepicker-it.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: auto;
+    }
+    .input-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .input-row label {
+      width: 30%;
+      font-weight: bold;
+      color: #555;
+      margin-right: 10px;
+    }
+    .input-row input, .input-row select {
+      width: 70%;
+      padding: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 8px; /* Ridotta la dimensione dei bottoni */
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 32%; /* Aumentato lo spazio tra i bottoni */
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #backButton {
+      background-color: #6c757d;
+    }
+    #backButton:hover {
+      background-color: #5a6268;
+    }
+    .result-box {
+      background-color: #e9ecef;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .result-box span {
+      font-weight: bold;
+      color: #007bff;
+    }
+    .error-message {
+      color: #dc3545;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .success-message {
+      color: #28a745;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .footer {
+      font-size: 12px;
+      color: #888;
+      text-align: left;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>MODIFICA ORE MENSILI</h1>
+  <form id="oreForm">
+    <div class="input-row">
+      <label for="manutentore">Manutentore:</label>
+      <select id="manutentore" required>
+        <option value="">Seleziona...</option>
+      </select>
+    </div>
+    <div class="input-row">
+      <label for="giorno">Giorno:</label>
+      <input type="text" id="giorno" required>
+    </div>
+    <div class="input-row">
+      <label for="oreOrd">Ore ORD:</label>
+      <input type="number" step="0.1" id="oreOrd">
+    </div>
+    <div class="input-row">
+      <label for="oreEmgRicev">Ore EMG-RICEV:</label>
+      <input type="number" step="0.1" id="oreEmgRicev">
+    </div>
+    <div class="input-row">
+      <label for="oreEmgProd">Ore EMG-PROD:</label>
+      <input type="number" step="0.1" id="oreEmgProd">
+    </div>
+    <div class="input-row">
+      <label for="oreEmgConf">Ore EMG-CONF:</label>
+      <input type="number" step="0.1" id="oreEmgConf">
+    </div>
+    <div class="input-row">
+      <label for="oreEmgImbMag">Ore EMG-IMB/MAG:</label>
+      <input type="number" step="0.1" id="oreEmgImbMag">
+    </div>
+    <div class="input-row">
+      <label for="oreEmgDepur">Ore EMG-DEPUR:</label>
+      <input type="number" step="0.1" id="oreEmgDepur">
+    </div>
+    <div class="input-row">
+      <label for="oreDanni">Ore DANNI:</label>
+      <input type="number" step="0.1" id="oreDanni">
+    </div>
+    <div class="input-row">
+      <label for="oreInstall">Ore INSTALL:</label>
+      <input type="number" step="0.1" id="oreInstall">
+    </div>
+    <div class="input-row">
+      <label for="oreRiparaz">Ore RIPARAZ:</label>
+      <input type="number" step="0.1" id="oreRiparaz">
+    </div>
+    <!-- Campi Ore ELETT/MECC nascosti -->
+    <input type="hidden" id="oreElett">
+    <input type="hidden" id="oreMecc">
+    <div class="button-row">
+      <button type="button" id="backButton" onclick="window.location.href='ins_ore.html'">INDIETRO</button>
+      <button type="button" id="homeButton" onclick="window.location.href='welcome.html'">HOME</button>
+      <button type="button" id="loadButton">CARICA</button>
+      <button type="submit">MODIFICA</button>
+      <button type="button" id="deleteButton">CANCELLA</button>
+    </div>
+  </form>
+  <div id="message" class="error-message"></div>
+  <div class="result-box" id="resultBox">
+    <p>Totale ore: <span id="totalOre">0.0</span></p>
+    <p>Ore Straordinarie: <span id="oreStraord">0.0</span></p>
+  </div>
+  <div class="footer">
+    &copy; 2025 Sistema Gestione Manutenzioni.<br>Created by Francesco Mussi.
+  </div>
+  <script>
+    // Configurazione Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7I7_NxFM-bRi4WExcOW6vJpCUPandIdM",
+      authDomain: "manutenzionetonon-24c9d.firebaseapp.com",
+      databaseURL: "https://manutenzionetonon-24c9d-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "manutenzionetonon-24c9d",
+      storageBucket: "manutenzionetonon-24c9d.appspot.com",
+      messagingSenderId: "278752294846",
+      appId: "1:278752294846:web:49cdc7ab4f5a37f7aeebef",
+      measurementId: "G-VJWMFSWH8L"
+    };
+
+    // Inizializza Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    $(function() {
+      $("#giorno").datepicker($.datepicker.regional["it"]);
+      $("#giorno").datepicker("option", "firstDay", 1);
+    });
+
+    // Carica i manutentori nel menù a tendina
+    function loadManutentori() {
+      const manutentoriRef = database.ref('manutentori');
+      manutentoriRef.once('value', (snapshot) => {
+        const manutentoreSelect = document.getElementById('manutentore');
+        manutentoreSelect.innerHTML = '<option value="">Seleziona...</option>'; // Reset options
+        snapshot.forEach((childSnapshot) => {
+          const manutentore = childSnapshot.val();
+          const option = document.createElement('option');
+          option.value = childSnapshot.key;
+          option.text = `${manutentore.nome} ${manutentore.cognome}`;
+          manutentoreSelect.add(option);
+        });
+      });
+    }
+
+    function isFestivo(dateObj) {
+      const giorno = dateObj.getDate();
+      const mese = dateObj.getMonth() + 1;
+      const anno = dateObj.getFullYear();
+
+      const festivi = [
+        '1-1',   // Capodanno
+        '6-1',   // Epifania
+        '25-4',  // Festa della Liberazione
+        '1-5',   // Festa del Lavoro
+        '2-6',   // Festa della Repubblica
+        '15-8',  // Ferragosto
+        '1-11',  // Ognissanti
+        '8-12',  // Immacolata Concezione
+        '25-12', // Natale
+        '26-12'  // Santo Stefano
+      ];
+
+      const pasqua = calcolaPasqua(anno);
+      const pasquetta = new Date(pasqua);
+      pasquetta.setDate(pasquetta.getDate() + 1);
+
+      festivi.push(`${pasqua.getDate()}-${pasqua.getMonth() + 1}`);
+      festivi.push(`${pasquetta.getDate()}-${pasquetta.getMonth() + 1}`);
+
+      return festivi.includes(`${giorno}-${mese}`);
+    }
+
+    function calcolaPasqua(anno) {
+      const a = anno % 19;
+      const b = Math.floor(anno / 100);
+      const c = anno % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const mese = Math.floor((h + l - 7 * m + 114) / 31);
+      const giorno = ((h + l - 7 * m + 114) % 31) + 1;
+
+      return new Date(anno, mese - 1, giorno);
+    }
+
+    function calcolaTotaleOre() {
+      const oreOrd = parseFloat(document.getElementById('oreOrd').value) || 0;
+      const oreEmgRicev = parseFloat(document.getElementById('oreEmgRicev').value) || 0;
+      const oreEmgProd = parseFloat(document.getElementById('oreEmgProd').value) || 0;
+      const oreEmgConf = parseFloat(document.getElementById('oreEmgConf').value) || 0;
+      const oreEmgImbMag = parseFloat(document.getElementById('oreEmgImbMag').value) || 0;
+      const oreEmgDepur = parseFloat(document.getElementById('oreEmgDepur').value) || 0;
+      const oreDanni = parseFloat(document.getElementById('oreDanni').value) || 0;
+      const oreInstall = parseFloat(document.getElementById('oreInstall').value) || 0;
+      const oreRiparaz = parseFloat(document.getElementById('oreRiparaz').value) || 0;
+
+      const totalOre = oreOrd + oreEmgRicev + oreEmgProd + oreEmgConf + oreEmgImbMag + oreEmgDepur + oreDanni + oreInstall + oreRiparaz;
+
+      document.getElementById('totalOre').textContent = totalOre.toFixed(1);
+
+      const dateParts = document.getElementById('giorno').value.split('/');
+      const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+      const dayOfWeek = dateObj.getDay();
+      let oreStraord = 0;
+      if (dayOfWeek === 0 || dayOfWeek === 6 || isFestivo(dateObj)) {
+        oreStraord = totalOre;
+      } else if (totalOre > 8) {
+        oreStraord = totalOre - 8;
+      }
+
+      document.getElementById('oreStraord').textContent = oreStraord.toFixed(1);
+
+      return {
+        totalOre,
+        oreElett: parseFloat(document.getElementById('oreElett').value) || 0,
+        oreMecc: parseFloat(document.getElementById('oreMecc').value) || 0
+      };
+    }
+
+    // Funzione per caricare le ore
+    function caricaOre() {
+      const manutentore = document.getElementById('manutentore').value;
+      const giorno = document.getElementById('giorno').value;
+
+      const oreRef = database.ref('ore/' + manutentore + '/' + giorno.replace(/\//g, '-'));
+      oreRef.once('value', (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById('oreOrd').value = data.oreOrd || 0;
+          document.getElementById('oreEmgRicev').value = data.oreEmgRicev || 0;
+          document.getElementById('oreEmgProd').value = data.oreEmgProd || 0;
+          document.getElementById('oreEmgConf').value = data.oreEmgConf || 0;
+          document.getElementById('oreEmgImbMag').value = data.oreEmgImbMag || 0;
+          document.getElementById('oreEmgDepur').value = data.oreEmgDepur || 0;
+          document.getElementById('oreDanni').value = data.oreDanni || 0;
+          document.getElementById('oreInstall').value = data.oreInstall || 0;
+          document.getElementById('oreRiparaz').value = data.oreRiparaz || 0;
+          document.getElementById('oreElett').value = data.oreElett || 0;
+          document.getElementById('oreMecc').value = data.oreMecc || 0;
+          calcolaTotaleOre();
+          document.getElementById('message').textContent = '';
+        } else {
+          document.getElementById('message').textContent = 'Nessun record trovato per il manutentore e il giorno selezionati.';
+          document.getElementById('message').className = 'error-message';
+        }
+      }).catch((error) => {
+        document.getElementById('message').textContent = 'Errore durante il caricamento delle ore: ' + error.message;
+        document.getElementById('message').className = 'error-message';
+      });
+    }
+
+    // Funzione per modificare le ore
+    function modificaOre() {
+      const manutentore = document.getElementById('manutentore').value;
+      const giorno = document.getElementById('giorno').value;
+      const oreOrd = parseFloat(document.getElementById('oreOrd').value) || 0;
+      const oreEmgRicev = parseFloat(document.getElementById('oreEmgRicev').value) || 0;
+      const oreEmgProd = parseFloat(document.getElementById('oreEmgProd').value) || 0;
+      const oreEmgConf = parseFloat(document.getElementById('oreEmgConf').value) || 0;
+      const oreEmgImbMag = parseFloat(document.getElementById('oreEmgImbMag').value) || 0;
+      const oreEmgDepur = parseFloat(document.getElementById('oreEmgDepur').value) || 0;
+      const oreDanni = parseFloat(document.getElementById('oreDanni').value) || 0;
+      const oreInstall = parseFloat(document.getElementById('oreInstall').value) || 0;
+      const oreRiparaz = parseFloat(document.getElementById('oreRiparaz').value) || 0;
+
+      const { totalOre, oreElett, oreMecc } = calcolaTotaleOre();
+
+      const dateParts = giorno.split('/');
+      const dateObj = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+      const dayOfWeek = dateObj.getDay();
+
+      let oreStraord = 0;
+      if (dayOfWeek === 0 || dayOfWeek === 6 || isFestivo(dateObj)) {
+        oreStraord = totalOre;
+      } else if (totalOre

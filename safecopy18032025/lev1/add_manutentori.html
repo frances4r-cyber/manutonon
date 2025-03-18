@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Aggiungi Manutentori - Sistema Gestione Manutenzioni</title>
+  <link rel="icon" href="data:,">
+  <script type="module" src="add_manutentori.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .form-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
+    .subtitle {
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .error-message {
+      color: #dc3545;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .success-message {
+      color: #28a745;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .footer {
+      font-size: 12px;
+      color: #888;
+      text-align: left;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation button {
+      width: auto;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>CASEIFICIO TONON<br><span class="subtitle">Aggiungi Manutentori</span></h1>
+    <form id="addManutentoreForm">
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" required>
+      <label for="cognome">Cognome:</label>
+      <input type="text" id="cognome" required>
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
+      <label for="cellulare">Numero di cellulare:</label>
+      <input type="tel" id="cellulare" required>
+      <label for="reperibilita">Reperibilità:</label>
+      <select id="reperibilita" required>
+        <option value="Si">Si</option>
+        <option value="No">No</option>
+      </select>
+      <button type="submit">Aggiungi Manutentore</button>
+    </form>
+    <div id="message" class="error-message"></div>
+    <div class="navigation">
+      <button onclick="window.location.href='welcome.html'">Home</button>
+      <button onclick="window.location.href='manu_config.html'">Configurazione Manutenzione</button>
+    </div>
+    <div class="footer">
+      &copy; 2025 Sistema Gestione Manutenzioni.<br>Created by Francesco Mussi.
+    </div>
+  </div>
+</body>
+</html>

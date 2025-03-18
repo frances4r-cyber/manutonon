@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MAGAZZINO RICAMBI</title>
+  <link rel="icon" href="data:,">
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script type="module" src="magdb.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      color: #555;
+    }
+    .mod-button, .preleva-button, .deposita-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .mod-button:hover, .preleva-button:hover, .deposita-button:hover {
+      background-color: #0056b3;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation button {
+      width: auto;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+    .filter-container {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .filter-container input,
+    .filter-container select,
+    .filter-container button {
+      padding: 10px;
+      margin-right: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .export-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .low-stock {
+      background-color: red;
+      color: white;
+    }
+    #logoutButton {
+      background-color: #dc3545;
+    }
+    #logoutButton:hover {
+      background-color: #c82333;
+    }
+    #homeButton {
+      background-color: #007bff;
+    }
+    #homeButton:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>MAGAZZINO RICAMBI</h1>
+  <div class="navigation">
+    <button onclick="window.location.href='welcome.html'" id="homeButton">Home</button>
+    <button onclick="window.location.href='getdb.html'">ELENCO MANUTENZIONI</button>
+    <button onclick="window.location.href='script.html'">INSERIMENTO MANUTENZIONI</button>
+    <button onclick="window.location.href='insmag.html'">INSERIMENTO RICAMBI</button>
+    <button id="logoutButton">Logout</button>
+  </div>
+  <div class="filter-container">
+    <input type="text" id="searchInput" placeholder="Cerca...">
+    <select id="filterTipo">
+      <option value="">Tutti i tipi</option>
+      <option value="CONS">CONS</option>
+      <option value="RIC">RIC</option>
+      <option value="GARANZIA">GARANZIA</option>
+    </select>
+    <button onclick="window.filterTable()">Filtra</button>
+    <button onclick="window.clearFilters()">Pulisci</button>
+    <button onclick="window.filterLowStock()">Visualizza Quantità Zero</button>
+    <button id="exportButton" style="display:none;" onclick="window.exportToXLSX()">Esporta in XLSX</button>
+  </div>
+  <table id="ricambiTable">
+    <thead>
+      <tr>
+        <th>Progressivo</th>
+        <th>COD. FOR.</th>
+        <th>Descrizione</th>
+        <th>Destinazione</th>
+        <th>Tipo</th>
+        <th>Fornitore</th>
+        <th>Q.tà residua</th>
+        <th>Costo</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody id="ricambiTableBody">
+      <!-- I dati verranno aggiunti qui da magdb.js -->
+    </tbody>
+  </table>
+  <script>
+    // Configurazione Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7I7_NxFM-bRi4WExcOW6vJpCUPandIdM",
+      authDomain: "manutenzionetonon-24c9d.firebaseapp.com",
+      databaseURL: "https://manutenzionetonon-24c9d-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "manutenzionetonon-24c9d",
+      storageBucket: "manutenzionetonon-24c9d.appspot.com",
+      messagingSenderId: "278752294846",
+      appId: "1:278752294846:web:49cdc7ab4f5a37f7aeebef",
+      measurementId: "G-VJWMFSWH8L"
+    };
+
+    // Inizializza Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Funzione di logout
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        // Logout riuscito, reindirizza a index.html
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error('Errore durante il logout:', error);
+      });
+    }
+
+    document.getElementById('logoutButton').addEventListener('click', logout);
+  </script>
+</body>
+</html>
