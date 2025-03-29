@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Inserimento Ore Manutentori</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.it.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .summary {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .summary h3 {
+      margin-top: 0;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .summary p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    .form-container {
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group select, 
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .input-with-btn {
+      display: flex;
+      align-items: center;
+    }
+    .input-with-btn input {
+      flex: 1;
+      margin-right: 10px;
+    }
+    .activity-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .checkbox-container input {
+      width: auto;
+      margin-right: 10px;
+    }
+    .form-actions {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .form-actions button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    /* Stili per la modale */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 60%;
+      border-radius: 8px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .activity-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #4CAF50;
+    }
+    .activity-item button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 3px 8px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inserimento Ore Manutentori</h1>
+  
+  <div class="summary">
+    <h3>Riassunto Ore</h3>
+    <p>Ore Totali: <span id="oreTotali">0</span></p>
+    <p>Ore Ordinarie: <span id="oreOrdinarie">0</span></p>
+    <p>Ore Straordinarie: <span id="oreStraordinarie">0</span></p>
+    <p>Ore Elettriche: <span id="oreElettriche">0</span></p>
+    <p>Ore Meccaniche: <span id="oreMeccaniche">0</span></p>
+  </div>
+  
+  <div class="form-container" id="oreForm">
+    <div class="form-group">
+      <label for="manutentore">Manutentore</label>
+      <select id="manutentore" required>
+        <option value="">Seleziona un manutentore</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="datepicker">Data</label>
+      <div id="datepicker" class="datepicker-inline"></div>
+      <input type="hidden" id="data">
+    </div>
+    
+    <div class="checkbox-container">
+      <input type="checkbox" id="giornoFestivo">
+      <label for="giornoFestivo">Giorno festivo</label>
+    </div>
+    
+    <!-- Lista completa delle tipologie di ore -->
+    <div class="form-group">
+      <label for="ord">ORD</label>
+      <div class="input-with-btn">
+        <input type="number" id="ord" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('ord')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emgRicev">EMG-RICEV</label>
+      <div class="input-with-btn">
+        <input type="number" id="emgRicev" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('emgRicev')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emgProd">EMG-PROD</label>
+      <div class="input-with-btn">
+        <input type="number" id="emgProd" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('emgProd')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emgConf">EMG-CONF</label>
+      <div class="input-with-btn">
+        <input type="number" id="emgConf" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('emgConf')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emgImbMag">EMG-IMB/MAG</label>
+      <div class="input-with-btn">
+        <input type="number" id="emgImbMag" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('emgImbMag')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="emgDepur">EMG-DEPUR</label>
+      <div class="input-with-btn">
+        <input type="number" id="emgDepur" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('emgDepur')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="danni">DANNI</label>
+      <div class="input-with-btn">
+        <input type="number" id="danni" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('danni')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="install">INSTALL</label>
+      <div class="input-with-btn">
+        <input type="number" id="install" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('install')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="corsi">CORSI</label>
+      <div class="input-with-btn">
+        <input type="number" id="corsi" class="numeric-input" step="0.01" min="0">
+        <button class="activity-btn" onclick="openActivitiesModal('corsi')">+ Attività</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="elett">ELETT</label>
+      <input type="number" id="elett" class="numeric-input" step="0.01" min="0">
+    </div>
+    
+    <div class="form-group">
+      <label for="mecc">MECC</label>
+      <input type="number" id="mecc" class="numeric-input" step="0.01" min="0">
+    </div>
+    
+    <div class="form-actions">
+      <button type="button" id="saveButton">Salva</button>
+    </div>
+  </div>
+
+  <!-- Modale per attività -->
+  <div id="activitiesModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="modalTitle">Attività svolte</h3>
+      <div id="activitiesContainer"></div>
+      <div class="form-group">
+        <label for="activityNumber">Numero attività (opzionale)</label>
+        <input type="text" id="activityNumber" class="activity-input"> <!-- Campo alfanumerico -->
+      </div>
+      <div class="form-group">
+        <label for="activityDescription">Descrizione attività</label>
+        <textarea id="activityDescription" class="activity-input" rows="3" required></textarea>
+      </div>
+      <button id="addActivityBtn" class="activity-btn">Aggiungi Attività</button>
+    </div>
+  </div>
+
+  <div class="navigation">
+    <button onclick="window.location.href='welcome.html'">Home</button>
+    <button onclick="window.location.href='calendore.html'">Calendario</button>
+    <button onclick="window.location.href='reportore.html'">REPORT ORE</button>
+  </div>
+
+  <script>
+    // Configurazione Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7I7_NxFM-bRi4WExcOW6vJpCUPandIdM",
+      authDomain: "manutenzionetonon-24c9d.firebaseapp.com",
+      databaseURL: "https://manutenzionetonon-24c9d-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "manutenzionetonon-24c9d",
+      storageBucket: "manutenzionetonon-24c9d.appspot.com",
+      messagingSenderId: "278752294846",
+      appId: "1:278752294846:web:49cdc7ab4f5a37f7aeebef",
+      measurementId: "G-VJWMFSWH8L"
+    };
+
+    // Inizializza Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    // Variabili per memorizzare le attività
+    let currentActivityType = '';
+    const activities = {
+      ord: [],
+      emgRicev: [],
+      emgProd: [],
+      emgConf: [],
+      emgImbMag: [],
+      emgDepur: [],
+      danni: [],
+      install: [],
+      corsi: []
+    };
+
+    // Carica i manutentori nel select
+    function loadManutentori() {
+      const manutentoriRef = database.ref('manutentori');
+      manutentoriRef.on('value', (snapshot) => {
+        const select = document.getElementById('manutentore');
+        select.innerHTML = '<option value="">Seleziona un manutentore</option>';
+        
+        snapshot.forEach((childSnapshot) => {
+          const manutentore = childSnapshot.val();
+          const option = document.createElement('option');
+          option.value = childSnapshot.key;
+          option.textContent = `${manutentore.nome} ${manutentore.cognome}`;
+          select.appendChild(option);
+        });
+      });
+    }
+
+    // Aggiorna il riassunto delle ore
+    function updateSummary() {
+      const ord = parseFloat(document.getElementById('ord').value) || 0;
+      const emgRicev = parseFloat(document.getElementById('emgRicev').value) || 0;
+      const emgProd = parseFloat(document.getElementById('emgProd').value) || 0;
+      const emgConf = parseFloat(document.getElementById('emgConf').value) || 0;
+      const emgImbMag = parseFloat(document.getElementById('emgImbMag').value) || 0;
+      const emgDepur = parseFloat(document.getElementById('emgDepur').value) || 0;
+      const danni = parseFloat(document.getElementById('danni').value) || 0;
+      const install = parseFloat(document.getElementById('install').value) || 0;
+      const corsi = parseFloat(document.getElementById('corsi').value) || 0;
+      const elett = parseFloat(document.getElementById('elett').value) || 0;
+      const mecc = parseFloat(document.getElementById('mecc').value) || 0;
+      const giornoFestivo = document.getElementById('giornoFestivo').checked;
+
+      // Calcolo ore totali
+      const oreTotali = ord + emgRicev + emgProd + emgConf + emgImbMag + emgDepur + danni + install + corsi;
+      
+      // Calcolo ore ordinarie/straordinarie
+      let oreOrdinarie = 0;
+      let oreStraordinarie = 0;
+      
+      if (giornoFestivo) {
+        oreOrdinarie = 0;
+        oreStraordinarie = oreTotali;
+      } else {
+        oreOrdinarie = Math.min(oreTotali, 8);
+        oreStraordinarie = Math.max(0, oreTotali - 8);
+      }
+
+      // Aggiorna la visualizzazione
+      document.getElementById('oreTotali').textContent = oreTotali.toFixed(2);
+      document.getElementById('oreOrdinarie').textContent = oreOrdinarie.toFixed(2);
+      document.getElementById('oreStraordinarie').textContent = oreStraordinarie.toFixed(2);
+      document.getElementById('oreElettriche').textContent = elett.toFixed(2);
+      document.getElementById('oreMeccaniche').textContent = mecc.toFixed(2);
+    }
+
+    // Funzioni per gestire la modale
+    function openActivitiesModal(type) {
+      const hours = parseFloat(document.getElementById(type).value) || 0;
+      if (hours > 0) {
+        currentActivityType = type;
+        document.getElementById('modalTitle').textContent = `Attività svolte per ${type.toUpperCase()}`;
+        updateActivitiesView();
+        document.getElementById('activitiesModal').style.display = 'block';
+      } else {
+        alert(`Inserire prima il numero di ore ${type.toUpperCase()}`);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('activitiesModal').style.display = 'none';
+    }
+
+    function updateActivitiesView() {
+      const container = document.getElementById('activitiesContainer');
+      container.innerHTML = '';
+      
+      activities[currentActivityType].forEach((activity, index) => {
+        const activityDiv = document.createElement('div');
+        activityDiv.className = 'activity-item';
+        activityDiv.innerHTML = `
+          <p><strong>Attività ${index + 1}:</strong> 
+          ${activity.number ? 'N° ' + activity.number : ''} 
+          ${activity.description}</p>
+          <button onclick="removeActivity(${index})">Elimina</button>
+        `;
+        container.appendChild(activityDiv);
+      });
+    }
+
+    // Salva le ore nel database
+    function saveHours() {
+      const manutentoreId = document.getElementById('manutentore').value;
+      if (!manutentoreId) {
+        alert('Seleziona un manutentore');
+        return;
+      }
+
+      const data = document.getElementById('data').value;
+      if (!data) {
+        alert('Seleziona una data');
+        return;
+      }
+
+      // Preparazione dati per il salvataggio
+      const oreData = {
+        data,
+        giornoFestivo: document.getElementById('giornoFestivo').checked,
+        ord: parseFloat(document.getElementById('ord').value) || 0,
+        emgRicev: parseFloat(document.getElementById('emgRicev').value) || 0,
+        emgProd: parseFloat(document.getElementById('emgProd').value) || 0,
+        emgConf: parseFloat(document.getElementById('emgConf').value) || 0,
+        emgImbMag: parseFloat(document.getElementById('emgImbMag').value) || 0,
+        emgDepur: parseFloat(document.getElementById('emgDepur').value) || 0,
+        danni: parseFloat(document.getElementById('danni').value) || 0,
+        install: parseFloat(document.getElementById('install').value) || 0,
+        corsi: parseFloat(document.getElementById('corsi').value) || 0,
+        elett: parseFloat(document.getElementById('elett').value) || 0,
+        mecc: parseFloat(document.getElementById('mecc').value) || 0,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      // Aggiungi le attività solo se presenti
+      const activityTypes = ['ord', 'emgRicev', 'emgProd', 'emgConf', 'emgImbMag', 'emgDepur', 'danni', 'install', 'corsi'];
+      activityTypes.forEach(type => {
+        if (activities[type].length > 0) {
+          oreData[`${type}Activities`] = activities[type];
+        }
+      });
+
+      // Verifica coerenza ore
+      const oreTotali = oreData.ord + oreData.emgRicev + oreData.emgProd + oreData.emgConf + 
+                       oreData.emgImbMag + oreData.emgDepur + oreData.danni + oreData.install + oreData.corsi;
+      
+      if (oreData.elett + oreData.mecc !== oreTotali) {
+        alert('La somma delle ore ELETT e MECC deve corrispondere alle ore totali inserite');
+        return;
+      }
+
+      // Salvataggio con gestione errori migliorata
+      database.ref(`ore/${manutentoreId}/${data}`).set(oreData)
+        .then(() => {
+          alert('Ore salvate con successo!');
+          resetForm();
+        })
+        .catch(error => {
+          console.error('Errore nel salvataggio:', error);
+          alert('Errore nel salvataggio delle ore. Controlla la console per i dettagli.');
+        });
+    }
+
+    // Resetta il form
+    function resetForm() {
+      document.getElementById('oreForm').reset();
+      for (const type in activities) {
+        activities[type] = [];
+      }
+      updateSummary();
+      $('#datepicker').datepicker('update', new Date());
+    }
+
+    // Inizializzazione
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inizializza datepicker
+      $('#datepicker').datepicker({
+        language: 'it',
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+      }).on('changeDate', function(e) {
+        $('#data').val(e.format('yyyy-mm-dd'));
+      });
+
+      // Carica i manutentori
+      loadManutentori();
+
+      // Gestione aggiunta attività
+      document.getElementById('addActivityBtn').addEventListener('click', function() {
+        const activityNumber = document.getElementById('activityNumber').value;
+        const activityDescription = document.getElementById('activityDescription').value;
+        
+        if (!activityDescription && !activityNumber) {
+          alert('Inserire almeno la descrizione o il numero attività');
+          return;
+        }
+        
+        activities[currentActivityType].push({
+          number: activityNumber,
+          description: activityDescription
+        });
+        
+        updateActivitiesView();
+        document.getElementById('activityNumber').value = '';
+        document.getElementById('activityDescription').value = '';
+      });
+
+      // Pulsante salva
+      document.getElementById('saveButton').addEventListener('click', saveHours);
+
+      // Aggiorna il riassunto quando cambiano i valori
+      document.querySelectorAll('.numeric-input').forEach(input => {
+        input.addEventListener('input', updateSummary);
+      });
+      document.getElementById('giornoFestivo').addEventListener('change', updateSummary);
+
+      // Verifica autenticazione
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = 'index.html';
+        }
+      });
+    });
+
+    // Funzioni globali
+    window.removeActivity = function(index) {
+      activities[currentActivityType].splice(index, 1);
+      updateActivitiesView();
+    };
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('activitiesModal')) {
+        closeModal();
+      }
+    };
+  </script>
+</body>
+</html>
