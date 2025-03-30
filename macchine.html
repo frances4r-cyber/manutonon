@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Macchine - Sistema Gestione Manutenzioni</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      max-width: 1000px;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .nav-buttons button {
+      margin: 0 10px;
+    }
+    /* Modale generica */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+      padding-top: 60px;
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      box-sizing: border-box;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    /* Stile per la modale MOD (larghezza 500px) */
+    .mod-modal .modal-content {
+      width: 300px; /* Larghezza fissa per la modale MOD */
+      max-width: 90%; /* Massimo 90% dello schermo */
+    }
+    /* Stile per la modale MAN (larghezza 800px) */
+    .man-modal .modal-content {
+      width: 900px; /* Larghezza fissa per la modale MAN */
+      max-width: 90%; /* Massimo 90% dello schermo */
+    }
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .form-group-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .form-group-row label {
+      width: 100px; /* Larghezza fissa per le etichette */
+      margin-right: 10px;
+    }
+    .form-group-row input,
+    .form-group-row select {
+      flex: 1; /* I campi di input occupano lo spazio rimanente */
+      min-width: 150px; /* Larghezza minima per i campi di input */
+      margin-right: 10px;
+    }
+    .date-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .date-row label {
+      width: 100px; /* Larghezza fissa per le etichette */
+      margin-right: 10px;
+    }
+    .date-row input {
+      flex: 1; /* I campi di input occupano lo spazio rimanente */
+      min-width: 150px; /* Larghezza minima per i campi di input */
+      margin-right: 10px;
+    }
+    .form-buttons {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .delete-button {
+      background-color: #ff4d4d;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .delete-button:hover {
+      background-color: #cc0000;
+    }
+    /* Stile specifico per il campo "Ogni" */
+    input[name="ogni"] {
+      width: 50px; /* Riduci la larghezza del campo "Ogni" */
+      max-width: 50px; /* Imposta una larghezza massima */
+    }
+    .search-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .search-container input {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      max-width: 80%;
+      margin-right: 10px;
+    }
+  </style>
+  <!-- Include jQuery and jQuery UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script>
+    $(function() {
+      // Set the datepicker to Italian
+      $.datepicker.setDefaults($.datepicker.regional['it']);
+      $.datepicker.regional['it'] = {
+        closeText: 'Chiudi',
+        prevText: '&#x3C;Prec',
+        nextText: 'Succ&#x3E;',
+        currentText: 'Oggi',
+        monthNames: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+        'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+        monthNamesShort: ['Gen','Feb','Mar','Apr','Mag','Giu',
+        'Lug','Ago','Set','Ott','Nov','Dic'],
+        dayNames: ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'],
+        dayNamesShort: ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+        dayNamesMin: ['Do','Lu','Ma','Me','Gi','Ve','Sa'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+      };
+      $.datepicker.setDefaults($.datepicker.regional['it']);
+    });
+  </script>
+</head>
+<body>
+  <h1>Lista Macchine</h1>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='welcome.html'">HOME</button>
+    <button onclick="window.location.href='insmacchina.html'">INSERISCI</button>
+    <button onclick="window.location.href='calendarmac.html'">CALENDARIO</button>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Cerca...">
+    <button id="searchButton">CERCA</button>
+    <button id="clearButton">PULISCI</button>
+  </div>
+
+  <table id="machineTable">
+    <thead>
+      <tr>
+        <th>Nome macchina</th>
+        <th>Costruttore</th>
+        <th>Fornitore</th>
+        <th>Codice interno</th>
+        <th>Modello</th>
+        <th>Matricola</th>
+        <th>Settore</th>
+        <th>Anno di costruzione</th>
+        <th>Anno di collaudo</th>
+        <th>4.0</th>
+        <th>5.0</th>
+        <th>Altre agevolazioni</th>
+        <th>Proprietà</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- La lista delle macchine verrà popolata dinamicamente -->
+    </tbody>
+  </table>
+
+  <!-- Modale per la modifica della macchina (MOD) -->
+  <div id="editModal" class="modal mod-modal">
+    <div class="modal-content">
+      <span class="close" id="closeEditModal">&times;</span>
+      <h2>Modifica Macchina</h2>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="editNomeMacchina">Nome macchina:</label>
+          <input type="text" id="editNomeMacchina" required>
+        </div>
+        <div class="form-group">
+          <label for="editCostruttore">Costruttore:</label>
+          <input type="text" id="editCostruttore" required>
+        </div>
+        <div class="form-group">
+          <label for="editFornitore">Fornitore:</label>
+          <input type="text" id="editFornitore" required>
+        </div>
+        <div class="form-group">
+          <label for="editCodiceInterno">Codice interno:</label>
+          <input type="text" id="editCodiceInterno" pattern="\S+" required>
+        </div>
+        <div class="form-group">
+          <label for="editModello">Modello:</label>
+          <input type="text" id="editModello" required>
+        </div>
+        <div class="form-group">
+          <label for="editMatricola">Matricola:</label>
+          <input type="text" id="editMatricola" required>
+        </div>
+        <div class="form-group">
+          <label for="editSettore">Settore:</label>
+          <select id="editSettore" required>
+            <!-- Options will be populated by JavaScript -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAnnoCostruzione">Anno di costruzione:</label>
+          <input type="number" id="editAnnoCostruzione" min="1900" max="2099" step="1" required>
+        </div>
+        <div class="form-group">
+          <label for="editAnnoCollaudo">Anno di collaudo:</label>
+          <input type="number" id="editAnnoCollaudo" min="1900" max="2099" step="1" required>
+        </div>
+        <div class="form-group">
+          <label for="editQuattroPuntoZero">4.0:</label>
+          <select id="editQuattroPuntoZero" required>
+            <option value="NO" selected>NO</option>
+            <option value="SI">SI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editCinquePuntoZero">5.0:</label>
+          <select id="editCinquePuntoZero" required>
+            <option value="NO" selected>NO</option>
+            <option value="SI">SI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAltreAgevolazioni">Altre agevolazioni:</label>
+          <input type="text" id="editAltreAgevolazioni" required>
+        </div>
+        <div class="form-group">
+          <label for="editProprieta">Proprietà:</label>
+          <input type="text" id="editProprieta" required>
+        </div>
+        <div class="form-buttons">
+          <button type="button" id="cancelEdit">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modale per la manutenzione programmata (MAN) -->
+  <div id="manutenzioneModal" class="modal man-modal">
+    <div class="modal-content">
+      <span class="close" id="closeManutenzioneModal">&times;</span>
+      <h2>Inserisci Manutenzione Programmata</h2>
+      <form id="manutenzioneForm">
+        <div id="manutenzioneContainer">
+          <div class="form-group" id="manutenzione1">
+            <div class="form-group-row">
+              <label for="manutenzione1">Manutenzione:</label>
+              <input type="text" name="manutenzione" required>
+              <label for="quando1">Quando:</label>
+              <select name="quando" required>
+                <option value="quotidiano">Quotidiano</option>
+                <option value="settimanale">Settimanale</option>
+                <option value="mensile">Mensile</option>
+                <option value="annuale">Annuale</option>
+              </select>
+              <label for="ogni1">Ogni:</label>
+              <input type="number" name="ogni" required maxlength="3" size="3">
+            </div>
+            <div class="form-group-row date-row">
+              <label for="dataInizio1">Data inizio:</label>
+              <input type="text" name="dataInizio" class="datepicker" required>
+              <label for="dataProssima1">Data prossima:</label>
+              <input type="text" name="dataProssima" class="datepicker" required readonly>
+            </div>
+            <button type="button" class="delete-button" onclick="deleteManutenzione(this)">Elimina</button>
+          </div>
+        </div>
+        <button type="button" id="addManutenzione">+</button>
+        <div class="form-buttons">
+          <button type="button" id="cancelManutenzione">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="macchine.js"></script>
+</body>
+</html>
